@@ -22,74 +22,132 @@ const scoreElement = document.getElementById("score");
 const timerElement = document.getElementById("timer");
 const levelElement = document.getElementById("level");
 const endScreen = document.querySelector(".end-screen");
-let orders = [];
-let orderPicked = undefined;
-let ingredientsPicked = [];
-let ingredientsNeed = [];
-let score = 0;
-let timer = 5;
-let fullOrder = false;
-let ordersCount = 1;
-let ordersMade = 0;
-let orderInterval;
-let ordersInterval;
-let level = 0;
+const saveLoad = document.querySelectorAll(".save");
+const startAgain = document.querySelector(".start-again");
+let gameData;
+if (localStorage.getItem("saveGame") !== null) {
+    saveLoad[0].classList.add("d-none");
+    saveLoad[1].classList.remove("d-none");
+}
+else {
+    saveLoad[1].classList.add("d-none");
+    saveLoad[0].classList.remove("d-none");
+    gameData = {
+        "orders": [],
+        "orderPicked": undefined,
+        "ingredientsPicked": [],
+        "ingredientsNeed": [],
+        "score": 0,
+        "timer": 120,
+        "fullOrder": false,
+        "ordersCount": 3,
+        "ordersMade": 0,
+        "level": 1,
+        "orderInterval": 0,
+        "ordersInterval": 0,
+    };
+    start();
+}
+/// SAVE
+saveLoad[0].onclick = () => {
+    clearAllIntervals();
+    gameData.ingredientsPicked = [];
+    gameData.ingredientsNeed = [];
+    gameData.orders = [];
+    gameData.ordersCount = 3;
+    gameData.ordersMade = 0;
+    localStorage.setItem("saveGame", JSON.stringify(gameData));
+    saveLoad[0].classList.add("d-none");
+    saveLoad[1].classList.remove("d-none");
+};
+/// LOAD
+saveLoad[1].onclick = () => {
+    // @ts-ignore
+    gameData = JSON.parse(localStorage.getItem("saveGame"));
+    console.log(gameData);
+    saveLoad[1].classList.add("d-none");
+    saveLoad[0].classList.remove("d-none");
+    start();
+};
+startAgain.onclick = () => {
+    gameData = {
+        "orders": [],
+        "orderPicked": undefined,
+        "ingredientsPicked": [],
+        "ingredientsNeed": [],
+        "score": 0,
+        "timer": 120,
+        "fullOrder": false,
+        "ordersCount": 3,
+        "ordersMade": 0,
+        "level": 1,
+        "orderInterval": 0,
+        "ordersInterval": 0,
+    };
+    start();
+};
 products.forEach(product => {
     productsDiv.innerHTML +=
         `<div class="product">${product}</div>`;
 });
-start();
 ///-------------start orders----------------
 function start() {
-    clearAllIntervals();
-    endScreen.style.display = "none";
-    ordersMade = 0;
-    level += 1;
+    clearInterval(gameData.orderInterval);
+    tableLeft.innerText = '';
+    tableRight.innerText = '';
+    topDiv.innerHTML = '';
+    gameData.orders.forEach(order => {
+        creatOrderHTML(order);
+    });
     updateLevel();
+    endScreen.style.display = "none";
+    updateScore();
     setTimer();
-    let i = ordersCount;
-    ordersInterval = setInterval(() => {
+    gameData.ordersInterval = setInterval(() => {
         let dish = dishes[rnd(dishes.length)];
-        orders.push(dish);
-        i--;
+        gameData.orders.push(dish);
+        gameData.ordersCount -= 1;
         creatOrderHTML(dish);
-        if (i === 0) {
-            clearInterval(ordersInterval);
+        if (gameData.ordersCount <= 0) {
+            clearInterval(gameData.ordersInterval);
         }
-    }, 5000);
+    }, 3000);
 }
 function addProducts(prod) {
-    ingredientsPicked.push(prod);
+    gameData.ingredientsPicked.push(prod);
     tableRight.innerHTML = "";
-    for (let i = 0; i < ingredientsNeed.length; i++) {
+    for (let i = 0; i < gameData.ingredientsNeed.length; i++) {
         tableRight.innerHTML +=
-            `<div class="text">${ingredientsPicked[i] !== undefined ? ingredientsPicked[i] : "?"}</div>`;
+            `<div class="text">${gameData.ingredientsPicked[i] !== undefined ? gameData.ingredientsPicked[i] : "?"}</div>`;
     }
-    return ingredientsPicked.length !== 0 && JSON.stringify([...ingredientsPicked].sort()) === JSON.stringify([...ingredientsNeed].sort());
+    return gameData.ingredientsPicked.length !== 0 && JSON.stringify([...gameData.ingredientsPicked].sort()) === JSON.stringify([...gameData.ingredientsNeed].sort());
 }
 const productDiv = document.querySelectorAll(".product");
 ///------------make dish-------------///
 productDiv.forEach(product => {
     product.onclick = () => {
         if (typeof product.textContent === "string") {
-            fullOrder = addProducts(product.textContent);
+            gameData.fullOrder = addProducts(product.textContent);
         }
-        if (fullOrder) {
-            ordersMade += 1;
+        if (gameData.fullOrder) {
+            gameData.ordersMade += 1;
             // @ts-ignore
-            let index = orders.findIndex(obj => obj.name === orderPicked.name);
-            orders.splice(index, 1);
-            score += 1;
+            let index = gameData.orders.findIndex(obj => obj.name === gameData.orderPicked.name);
+            gameData.orders.splice(index, 1);
+            gameData.score += 1;
             updateScore();
+            gameData.fullOrder = false;
             tableLeft.innerText = '';
             tableRight.innerText = '';
             topDiv.innerHTML = '';
-            orders.forEach(order => {
+            gameData.orders.forEach(order => {
                 creatOrderHTML(order);
             });
-            if (ordersMade === ordersCount) {
-                timer -= 10;
-                console.log(timer);
+            console.log(gameData.ordersMade);
+            if (gameData.ordersMade >= 3) {
+                gameData.timer -= 10;
+                gameData.level += 1;
+                gameData.ordersCount = 3;
                 start();
             }
         }
@@ -104,15 +162,15 @@ function creatOrderHTML(dish) {
     const orderDivs = document.querySelectorAll(".order");
     orderDivs.forEach(order => {
         order.onclick = () => {
-            ingredientsPicked = [];
+            gameData.ingredientsPicked = [];
             let selected = order.children[1].textContent;
             let findDish = dishes.find(dish => dish.name === selected);
-            orderPicked = findDish;
+            gameData.orderPicked = findDish;
             // @ts-ignore
-            ingredientsNeed = findDish.ingredients.sort();
+            gameData.ingredientsNeed = findDish.ingredients.sort();
             tableLeft.innerHTML = "";
             tableRight.innerHTML = "";
-            ingredientsNeed.forEach((ingredient) => {
+            gameData.ingredientsNeed.forEach((ingredient) => {
                 tableLeft.innerHTML +=
                     `<div class="text">${ingredient}</div>`;
                 tableRight.innerHTML +=
@@ -129,8 +187,8 @@ function creatOrderHTML(dish) {
     }
 }
 function setTimer() {
-    let i = timer;
-    orderInterval = setInterval(() => {
+    let i = gameData.timer;
+    gameData.orderInterval = setInterval(() => {
         i--;
         updateTimer(i);
         if (i <= 0)
@@ -143,22 +201,21 @@ function updateTimer(time) {
 }
 function updateScore() {
     // @ts-ignore
-    scoreElement.textContent = score;
+    scoreElement.textContent = gameData.score;
 }
 function updateLevel() {
     // @ts-ignore
-    levelElement.textContent = level;
+    levelElement.textContent = gameData.level;
 }
 function rnd(num) {
     return Math.floor(Math.random() * num);
 }
 function endGame() {
     clearAllIntervals();
-    // finalScoreElement.textContent = score;
-    // gameContainer.style.display = "none";
+    localStorage.removeItem("saveGame");
     endScreen.style.display = "block";
 }
 function clearAllIntervals() {
-    clearInterval(orderInterval);
-    clearInterval(ordersInterval);
+    clearInterval(gameData.orderInterval);
+    clearInterval(gameData.ordersInterval);
 }
