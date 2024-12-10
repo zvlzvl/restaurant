@@ -1,0 +1,180 @@
+
+
+
+body {
+    font-family: Arial, sans-serif;
+    padding: 0;
+    background-color: #f4f6f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    gap: 10px;
+    width: 1100px;
+    margin: auto;
+    background-image: url("https://img.lovepik.com/bg/20240112/Cafe-Table-and-Chairs-Lighting-Setting-the-Perfect-Background_2760365_wh860.jpg");
+    background-size: cover;
+}
+
+.container {
+    display: flex;
+    /*background-color: #f4f6f9;*/
+    margin-top: 30px;
+    gap: 20px;
+    width: 90%;
+    height: 90%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+}
+
+.top {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: burlywood;
+    width: 100%;
+    height: 100px;
+}
+
+.circle {
+    width: 10px;
+    height: 10px;
+    text-align: center;
+    border-radius: 50%;
+    background-color: black;
+}
+
+.order {
+    width: 100px;
+    height: 50px;
+    font-size: 16px;
+    text-align: center;
+    padding: 10px;
+    color: black;
+    font-style: italic;
+    background-color: #e6ff00;
+    box-shadow: #7c8533 5px 5px 10px 2px;
+    margin-top: 20px;
+    margin-left: 5px;
+}
+
+.products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 40px;
+}
+.table{
+    width: 80%;
+    height: 60px;
+    background-color: silver;
+    display: flex;
+    gap: 10px;
+    border-radius: 20px;
+}
+.left, .right {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 30px;
+    width: 50%;
+    justify-content: center;
+}
+
+.product {
+    width: 55px;
+    height: 55px;
+    border-radius: 10px;
+    border: 2px solid #f4f6f9;
+}
+.restorante{
+    background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyUWrROMdvHpRIalRkhzI0YtEwtgY3WdRUmA&s");
+    /*background-size: cover;*/
+    /*background-position: center;*/
+    /*background-repeat: no-repeat;*/
+    /*width: 100%;*/
+    /*height: 1000px;*/
+}
+.end-screen {
+    position: absolute;
+    top: 40%;
+    left:40%;
+    display: none;
+    text-align: center;
+    color:white;
+    background-color: #04181f;
+    padding: 10px;
+}
+.score-timer{
+    color: white;
+    margin-top: 10px;
+    font-size: 18px;
+}
+.product:hover {
+    border: 2px solid #ff1414;
+}
+
+.d-none {
+    display: none;
+}
+
+.a-start {
+    align-items: start;
+}
+
+
+.a-center {
+    align-items: center;
+}
+
+.a-end {
+    align-items: end;
+}
+
+.j-center {
+    justify-content: center;
+}
+
+.flex {
+    display: flex;
+}
+
+.d-column {
+    flex-direction: column;
+}
+
+.j-space-around {
+    justify-content: space-around;
+}
+
+.j-space-between {
+    justify-content: space-between;
+}
+
+.gap20 {
+    gap: 20px;
+}
+
+.gap {
+    gap: 10px;
+}
+
+.gap100 {
+    gap: 100px;
+}
+
+.f-wrap {
+    flex-wrap: wrap;
+}
+
+.m-t-30 {
+    margin-top: 30px;
+}
+
+.grow {
+    flex: 1;
+}
+
+
+
